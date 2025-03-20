@@ -1,33 +1,42 @@
-// Check for service worker support
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('service-worker.js')
-            .then(registration => {
-                console.log('Service Worker registered with scope:', registration.scope);
-            })
-            .catch(error => {
-                console.error('Service Worker registration failed:', error);
-            });
-    });
-}
+const inputField = document.getElementById('input-temp');
+const fromUnitField = document.getElementById('input-unit');
+const toUnitField = document.getElementById('output-unit');
+const outputField = document.getElementById('output-temp');
+const form = document.getElementById('converter');
 
-// Notification button event listener
-document.getElementById('notifyBtn').addEventListener('click', () => {
-    // Check for notification permission
-    if (Notification.permission === 'granted') {
-        showNotification();
-    } else if (Notification.permission !== 'denied') {
-        Notification.requestPermission().then(permission => {
-            if (permission === 'granted') {
-                showNotification();
-            }
-        });
+function convertTemp(value, fromUnit, toUnit) {
+  if (fromUnit === 'c') {
+    if (toUnit === 'f') {
+      return value * 9 / 5 + 32;
+    } else if (toUnit === 'k') {
+      return value + 273.15;
     }
-});
-
-function showNotification() {
-    const notification = new Notification('Hello, World!', {
-        body: 'This is a simple PWA notification!',
-        icon: 'icon.png' // You can use your own icon
-    });
+    return value;
+  }
+  if (fromUnit === 'f') {
+    if (toUnit === 'c') {
+      return (value - 32) * 5 / 9;
+    } else if (toUnit === 'k') {
+      return (value + 459.67) * 5 / 9;
+    }
+    return value;
+  }
+  if (fromUnit === 'k') {
+    if (toUnit === 'c') {
+      return value - 273.15;
+    } else if (toUnit === 'f') {
+      return value * 9 / 5 - 459.67;
+    }
+    return value;
+  }
+  throw new Error('Invalid unit');
 }
+
+form.addEventListener('input', () => {
+  const inputTemp = parseFloat(inputField.value);
+  const fromUnit = fromUnitField.value;
+  const toUnit = toUnitField.value;
+
+  const outputTemp = convertTemp(inputTemp, fromUnit, toUnit);
+  outputField.value = (Math.round(outputTemp * 100) / 100) + ' ' + toUnit.toUpperCase();
+});

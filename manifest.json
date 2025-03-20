@@ -1,9 +1,17 @@
 {
-    "name": "Simple PWA",
-    "short_name": "PWA",
-    "start_url": "index.html",
-    "display": "standalone",
-    "background_color": "#ffffff",
-    "theme_color": "#000000",
-    "icons": []
+  "lang": "en-us",
+  "name": "Temperature converter app",
+  "short_name": "Temperature converter",
+  "description": "A basic temperature converter application that can convert to and from Celsius, Kelvin, and Fahrenheit",
+  "start_url": "./",
+  "background_color": "#2f3d58",
+  "theme_color": "#2f3d58",
+  "orientation": "any",
+  "display": "standalone",
+  "icons": [
+      {
+          "src": "./icon512.png",
+          "sizes": "512x512"
+      }
+  ]
 }
