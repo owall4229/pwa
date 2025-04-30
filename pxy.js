@@ -1,24 +1,50 @@
-const http = require('http');
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = 800;
+canvas.height = 400;
 
-export default async function handler(req, res) {
-    const url = req.query.url;
-
-    if (!url) {
-        res.status(400).send('Missing "url" parameter');
-        return;
+class Player {
+    constructor() {
+        this.x = 100;
+        this.y = 300;
+        this.width = 40;
+        this.height = 40;
+        this.velocityY = 0;
+        this.gravity = 0.5;
+        this.isFlipped = false;
     }
 
-    http.get(url, (response) => {
-        let data = '';
+    update() {
+        if (!this.isFlipped) {
+            this.velocityY += this.gravity;
+        } else {
+            this.velocityY -= this.gravity;
+        }
 
-        response.on('data', (chunk) => {
-            data += chunk;
-        });
+        this.y += this.velocityY;
+        if (this.y + this.height > canvas.height) this.y = canvas.height - this.height;
+        if (this.y < 0) this.y = 0;
+    }
 
-        response.on('end', () => {
-            res.status(response.statusCode).send(data);
-        });
-    }).on('error', (err) => {
-        res.status(500).send('Error while fetching: ' + err.message);
-    });
+    draw() {
+        ctx.fillStyle = "#ff66b2";
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
 }
+
+const player = new Player();
+
+document.addEventListener("keydown", (event) => {
+    if (event.code === "Space") {
+        player.isFlipped = !player.isFlipped;
+    }
+});
+
+function gameLoop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    player.update();
+    player.draw();
+    requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
